@@ -1,53 +1,157 @@
 <!DOCTYPE html>
 <html lang="th">
 <head>
-  <meta charset="UTF-8">
-    <title>เว็บของอิม</title>
-    </head>
+<meta charset="UTF-8">
+<title>เว็บของอิม</title>
+<style>
+  body{
+    margin:0;
+    background:black;
+    color:#00ff88;
+    text-align:center;
+    overflow:hidden;
+    transition:background 2s,color 2s;
+  }
+  h1{ margin-top:40px; }
+  button{
+    background:black;
+    color:#00ff88;
+    border:2px solid #00ff88;
+    padding:20px 40px;
+    font-size:22px;
+    box-shadow:0 0 20px #00ff88;
+    cursor:pointer;
+  }
+  #ghost{
+    display:none;
+    position:fixed;
+    top:0; left:0;
+    width:100vw; height:100vh;
+    object-fit:cover;
+    z-index:9999;
+  }
+  .shake{
+    animation: shake 0.15s infinite;
+  }
+  @keyframes shake{
+    0%{transform:translate(0,0)}
+    25%{transform:translate(5px,5px)}
+    50%{transform:translate(-5px,-5px)}
+    75%{transform:translate(5px,-5px)}
+    100%{transform:translate(0,0)}
+  }
+  #escape{
+    display:none;
+    position:fixed;
+    bottom:40px;
+    left:50%;
+    transform:translateX(-50%);
+    z-index:10000;
+    background:#000;
+    color:#fff;
+    border:2px solid red;
+  }
+  #msg{
+    display:none;
+    position:fixed;
+    top:50%;
+    left:50%;
+    transform:translate(-50%,-50%);
+    color:red;
+    font-size:40px;
+    z-index:10001;
+  }
+</style>
+</head>
 
-    <body style="margin:0;background:black;color:#00ff88;text-align:center;">
+<body>
+<h1 id="title">เว็บของอิม</h1>
 
-      <h1>เว็บของอิม</h1>
+<button id="btn">กดดิ อย่ากลัว</button>
 
-        <button onclick="scare()"
-            style="
-                  background:black;
-                        color:#00ff88;
-                              border:2px solid #00ff88;
-                                    padding:20px 40px;
-                                          font-size:22px;
-                                                box-shadow:0 0 20px #00ff88;
-                                                      cursor:pointer;
-                                                          ">
-                                                              กดดิ อย่ากลัว
-                                                                </button>
+<img id="ghost" src="">
+<audio id="scream" src="scary-scream-401725.mp3"></audio>
 
-                                                                  <img id="ghost"
-                                                                      src="0x1900-000000-80-0-0.jpg"
-                                                                          style="
-                                                                                display:none;
-                                                                                      position:fixed;
-                                                                                            top:0;
-                                                                                                  left:0;
-                                                                                                        width:100%;
-                                                                                                              height:100%;
-                                                                                                                    object-fit:cover;
-                                                                                                                          z-index:9999;
-                                                                                                                              ">
+<button id="escape">หนี</button>
+<div id="msg">you can’t escape</div>
 
-                                                                                                                                <audio id="scream">
-                                                                                                                                    <source src="scary-scream-401725.mp3" type="audio/mpeg">
-                                                                                                                                      </audio>
+<script>
+let clickCount = 0;
+const btn = document.getElementById("btn");
+const ghost = document.getElementById("ghost");
+const scream = document.getElementById("scream");
+const escapeBtn = document.getElementById("escape");
+const msg = document.getElementById("msg");
 
-                                                                                                                                        <script>
-                                                                                                                                            function scare() {
-                                                                                                                                                  const g = document.getElementById("ghost");
-                                                                                                                                                        const s = document.getElementById("scream");
-                                                                                                                                                              g.style.display = "block";
-                                                                                                                                                                    s.volume = 1.0;
-                                                                                                                                                                          s.play();
-                                                                                                                                                                              }
-                                                                                                                                                                                </script>
+const ghostImages = [
+  "ghost1.jpg",
+  "ghost2.jpg",
+  "ghost3.jpg"
+]; // 👈 ใส่ชื่อรูปผีที่มึงโหลดมา
 
-                                                                                                                                                                                </body>
-                                                                                                                                                                                </html>
+let ghostInterval;
+let volumeInterval;
+
+btn.onclick = () => {
+  clickCount++;
+
+  // 👉 ครั้งที่ 1
+  if(clickCount === 1){
+    ghost.src = ghostImages[0];
+    ghost.style.display = "block";
+    scream.volume = 1;
+    scream.currentTime = 0;
+    scream.play();
+    setTimeout(()=>ghost.style.display="none",700);
+  }
+
+  // 👉 ครั้งที่ 2
+  else if(clickCount === 2){
+    document.body.style.background = "darkred";
+    document.body.style.color = "black";
+    btn.style.background = "red";
+    btn.style.color = "black";
+  }
+
+  // 👉 ครั้งที่ 3 (โหด)
+  else if(clickCount === 3){
+    btn.style.display = "none";
+
+    setTimeout(()=>{
+      ghost.style.display = "block";
+      document.body.classList.add("shake");
+      escapeBtn.style.display = "block";
+
+      let i = 0;
+      ghostInterval = setInterval(()=>{
+        ghost.src = ghostImages[i % ghostImages.length];
+        i++;
+      }, 400);
+
+      scream.loop = true;
+      scream.volume = 0.1;
+      scream.currentTime = 0;
+      scream.play();
+
+      let v = 0.1;
+      volumeInterval = setInterval(()=>{
+        v += 0.05;
+        if(v >= 1){
+          v = 1;
+          scream.playbackRate = 1.2;
+        }
+        scream.volume = v;
+      }, 500);
+
+      document.body.style.background = "red";
+    }, 2500);
+  }
+};
+
+escapeBtn.onclick = ()=>{
+  escapeBtn.style.display = "none";
+  msg.style.display = "block";
+};
+</script>
+</body>
+</html>
