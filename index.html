@@ -1,44 +1,53 @@
 <!DOCTYPE html>
-<html>
+<html lang="th">
 <head>
   <meta charset="UTF-8">
-    <title>เว็บใครไม่บอกของอิม/title>
+    <title>เว็บของอิม</title>
     </head>
 
-    <body style="background:black;color:#00ff88;text-align:center;padding-top:100px;">
+    <body style="margin:0;background:black;color:#00ff88;text-align:center;">
 
-    <h1>กล้าก็กด</h1>
+      <h1>เว็บของอิม</h1>
 
-    <button onclick="scare()"
-    style="
-    background:black;
-    color:#00ff88;
-    border:2px solid #00ff88;
-    padding:20px 40px;
-    font-size:22px;
-    box-shadow:0 0 20px #00ff88;
-    cursor:pointer;">
-    กดตรงนี้
-    </button>
+        <button onclick="scare()"
+            style="
+                  background:black;
+                        color:#00ff88;
+                              border:2px solid #00ff88;
+                                    padding:20px 40px;
+                                          font-size:22px;
+                                                box-shadow:0 0 20px #00ff88;
+                                                      cursor:pointer;
+                                                          ">
+                                                              กดดิ อย่ากลัว
+                                                                </button>
 
-    <br><br>
+                                                                  <img id="ghost"
+                                                                      src="0x1900-000000-80-0-0.jpg"
+                                                                          style="
+                                                                                display:none;
+                                                                                      position:fixed;
+                                                                                            top:0;
+                                                                                                  left:0;
+                                                                                                        width:100%;
+                                                                                                              height:100%;
+                                                                                                                    object-fit:cover;
+                                                                                                                          z-index:9999;
+                                                                                                                              ">
 
-    <img id="ghost"
-    src="0x1900-000000-8....jpg"
-    style="display:none;position:fixed;top:0;left:0;width:100%;height:100%;z-index:999;">
+                                                                                                                                <audio id="scream">
+                                                                                                                                    <source src="scary-scream-401725.mp3" type="audio/mpeg">
+                                                                                                                                      </audio>
 
-    <audio id="scream">
-      <source src="scary-scream-4017....mp3" type="audio/mpeg">
-      </audio>
+                                                                                                                                        <script>
+                                                                                                                                            function scare() {
+                                                                                                                                                  const g = document.getElementById("ghost");
+                                                                                                                                                        const s = document.getElementById("scream");
+                                                                                                                                                              g.style.display = "block";
+                                                                                                                                                                    s.volume = 1.0;
+                                                                                                                                                                          s.play();
+                                                                                                                                                                              }
+                                                                                                                                                                                </script>
 
-      <script>
-      function scare(){
-        document.getElementById("ghost").style.display = "block";
-          let s = document.getElementById("scream");
-            s.volume = 1.0;
-              s.play();
-              }
-              </script>
-
-              </body>
-              </html>
+                                                                                                                                                                                </body>
+                                                                                                                                                                                </html>
