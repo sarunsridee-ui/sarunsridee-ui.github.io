@@ -1,9 +1,10 @@
-<!-- FORCE REDEPLOY 999 -->
+
 <!DOCTYPE html>
 <html lang="th">
 <head>
 <meta charset="UTF-8">
 <title>เว็บของอิม</title>
+
 <style>
   body{
     margin:0;
@@ -14,6 +15,7 @@
     transition:background 2s,color 2s;
   }
   h1{ margin-top:40px; }
+
   button{
     background:black;
     color:#00ff88;
@@ -23,6 +25,7 @@
     box-shadow:0 0 20px #00ff88;
     cursor:pointer;
   }
+
   #ghost{
     display:none;
     position:fixed;
@@ -31,9 +34,11 @@
     object-fit:cover;
     z-index:9999;
   }
+
   .shake{
     animation: shake 0.15s infinite;
   }
+
   @keyframes shake{
     0%{transform:translate(0,0)}
     25%{transform:translate(5px,5px)}
@@ -41,6 +46,7 @@
     75%{transform:translate(5px,-5px)}
     100%{transform:translate(0,0)}
   }
+
   #escape{
     display:none;
     position:fixed;
@@ -48,10 +54,11 @@
     left:50%;
     transform:translateX(-50%);
     z-index:10000;
-    background:#000;
-    color:#fff;
+    background:black;
+    color:white;
     border:2px solid red;
   }
+
   #msg{
     display:none;
     position:fixed;
@@ -66,18 +73,19 @@
 </head>
 
 <body>
-<h1 id="title">เว็บของอิม</h1>
 
+<h1>เว็บของอิม</h1>
 <button id="btn">กดดิ อย่ากลัว</button>
 
 <img id="ghost" src="">
-<audio id="scream" src="scary-scream-401725.mp3"></audio>
+<audio id="scream" src="scary-scream-401725.mp3" preload="auto"></audio>
 
 <button id="escape">หนี</button>
 <div id="msg">you can’t escape</div>
 
 <script>
 let clickCount = 0;
+
 const btn = document.getElementById("btn");
 const ghost = document.getElementById("ghost");
 const scream = document.getElementById("scream");
@@ -88,25 +96,29 @@ const ghostImages = [
   "ghost1.jpg",
   "ghost2.jpg",
   "ghost3.jpg"
-]; // 👈 ใส่ชื่อรูปผีที่มึงโหลดมา
-
-let ghostInterval;
-let volumeInterval;
+]; // ใส่รูปผีจริงของมึง
 
 btn.onclick = () => {
   clickCount++;
 
-  // 👉 ครั้งที่ 1
+  // ครั้งที่ 1
   if(clickCount === 1){
     ghost.src = ghostImages[0];
     ghost.style.display = "block";
-    scream.volume = 1;
+
+    scream.pause();
     scream.currentTime = 0;
+    scream.muted = false;
+    scream.volume = 1;
+    scream.loop = false;
     scream.play();
-    setTimeout(()=>ghost.style.display="none",700);
+
+    setTimeout(()=>{
+      ghost.style.display="none";
+    },700);
   }
 
-  // 👉 ครั้งที่ 2
+  // ครั้งที่ 2
   else if(clickCount === 2){
     document.body.style.background = "darkred";
     document.body.style.color = "black";
@@ -114,38 +126,43 @@ btn.onclick = () => {
     btn.style.color = "black";
   }
 
-  // 👉 ครั้งที่ 3 (โหด)
+  // ครั้งที่ 3 (นรก)
   else if(clickCount === 3){
     btn.style.display = "none";
 
     setTimeout(()=>{
-      ghost.style.display = "block";
+      document.body.style.background = "red";
       document.body.classList.add("shake");
+
+      ghost.style.display = "block";
       escapeBtn.style.display = "block";
 
       let i = 0;
-      ghostInterval = setInterval(()=>{
+      setInterval(()=>{
         ghost.src = ghostImages[i % ghostImages.length];
         i++;
-      }, 400);
+      },400);
 
-      scream.loop = true;
-      scream.volume = 0.1;
+      // เสียงผี (มือถือไม่บล็อก)
+      scream.pause();
       scream.currentTime = 0;
+      scream.muted = false;
+      scream.loop = true;
+      scream.volume = 0.3;
       scream.play();
 
-      let v = 0.1;
-      volumeInterval = setInterval(()=>{
-        v += 0.05;
+      // เพิ่มเสียงแบบไม่พัง
+      let v = 0.3;
+      const volUp = setInterval(()=>{
         if(v >= 1){
           v = 1;
-          scream.playbackRate = 1.2;
+          clearInterval(volUp);
         }
         scream.volume = v;
-      }, 500);
+        v += 0.1;
+      },800);
 
-      document.body.style.background = "red";
-    }, 2500);
+    },2500);
   }
 };
 
@@ -154,5 +171,6 @@ escapeBtn.onclick = ()=>{
   msg.style.display = "block";
 };
 </script>
+
 </body>
 </html>
