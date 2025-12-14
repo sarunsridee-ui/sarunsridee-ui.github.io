@@ -1,28 +1,28 @@
 <!DOCTYPE html>
 <html lang="th">
 <head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Ghost Web</title>
 
 <style>
   body {
     margin: 0;
+    height: 100vh;
     background: black;
     color: white;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
     font-family: sans-serif;
-    text-align: center;
     overflow: hidden;
-  }
-
-  h1 {
-    margin-top: 40px;
   }
 
   button {
     font-size: 24px;
-    padding: 12px 30px;
-    margin: 20px;
+    padding: 10px 25px;
+    margin: 10px;
   }
 
   #ghost {
@@ -32,17 +32,7 @@
     width: 100vw;
     height: 100vh;
     object-fit: cover;
-    z-index: 10;
-  }
-
-  #escapeBtn {
-    display: none;
-    position: fixed;
-    bottom: 30px;
-    left: 50%;
-    transform: translateX(-50%);
-    z-index: 20;
-    font-size: 20px;
+    z-index: 999;
   }
 
   .shake {
@@ -51,10 +41,17 @@
 
   @keyframes shake {
     0% { transform: translate(0,0); }
-    25% { transform: translate(5px,0); }
-    50% { transform: translate(-5px,0); }
-    75% { transform: translate(0,5px); }
+    25% { transform: translate(5px,5px); }
+    50% { transform: translate(-5px,5px); }
+    75% { transform: translate(5px,-5px); }
     100% { transform: translate(0,0); }
+  }
+
+  #escape {
+    display: none;
+    position: fixed;
+    bottom: 20px;
+    z-index: 1000;
   }
 </style>
 </head>
@@ -63,28 +60,34 @@
 
 <h1>👻 อย่ากด</h1>
 
-<button id="btn">กด</button>
-<button id="escapeBtn">หนี</button>
+<div>
+  <button id="btn">กด</button>
+  <button id="escape">หนี</button>
+</div>
 
-<img id="ghost" src="ghost1.jpg">
+<img id="ghost" src="">
 <audio id="scream" src="scream.mp3" preload="auto"></audio>
 
 <script>
 const btn = document.getElementById("btn");
 const ghost = document.getElementById("ghost");
 const scream = document.getElementById("scream");
-const escapeBtn = document.getElementById("escapeBtn");
+const escapeBtn = document.getElementById("escape");
+
+const ghosts = [
+  "ghost0.jpg",
+  "ghost1.jpg",
+  "ghost2.jpg",
+  "ghost3.jpg",
+  "ghost4.jpg",
+  "ghost5.jpg",
+  "ghost666.jpg"
+];
 
 let clickCount = 0;
 let ghostLoop, volumeLoop;
 
-const ghosts = [
-  "ghost1.jpg",
-  "ghost2.jpg",
-  "ghost3.jpg"
-];
-
-// 🔓 ปลดล็อกเสียง (มือถือจำเป็น)
+/* 🔓 ปลดล็อกเสียง (มือถือ) */
 document.body.addEventListener("click", () => {
   scream.muted = false;
   scream.play().then(()=>{
@@ -96,24 +99,22 @@ document.body.addEventListener("click", () => {
 btn.onclick = () => {
   clickCount++;
 
-  // ครั้งที่ 1
+  // 👉 ครั้งที่ 1
   if (clickCount === 1) {
     ghost.src = ghosts[0] + "?v=1";
     ghost.style.display = "block";
-    scream.volume = 1;
     scream.currentTime = 0;
+    scream.volume = 1;
     scream.play();
     setTimeout(()=>ghost.style.display="none",700);
   }
 
-  // ครั้งที่ 2
+  // 👉 ครั้งที่ 2
   else if (clickCount === 2) {
     document.body.style.background = "darkred";
-    document.body.style.color = "black";
-    btn.style.background = "red";
   }
 
-  // ครั้งที่ 3 = นรกแตก
+  // 👉 ครั้งที่ 3 = นรกแตก
   else if (clickCount === 3) {
     btn.style.display = "none";
     ghost.style.display = "block";
@@ -124,7 +125,7 @@ btn.onclick = () => {
     ghostLoop = setInterval(()=>{
       ghost.src = ghosts[i % ghosts.length] + "?v=" + i;
       i++;
-    },400);
+    }, 300);
 
     scream.loop = true;
     scream.volume = 0.1;
@@ -139,18 +140,20 @@ btn.onclick = () => {
         scream.playbackRate = 1.3;
       }
       scream.volume = v;
-    },500);
+    }, 500);
 
-    document.body.style.background = "red";
-
-    // ⏱️ 5 วิ วาร์ป YouTube
+    // ⏱ 5 วิ วาร์ป YouTube (เปลี่ยนลิงก์ได้)
     setTimeout(()=>{
       window.location.href = "https://youtu.be/B0mPwbedJCo";
-    },5000);
+    }, 5000);
   }
 };
 
 escapeBtn.onclick = () => {
+  clearInterval(ghostLoop);
+  clearInterval(volumeLoop);
+  ghost.style.display = "none";
+  document.body.classList.remove("shake");
   escapeBtn.style.display = "none";
 };
 </script>
