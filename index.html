@@ -1,122 +1,103 @@
 <!DOCTYPE html>
 <html lang="th">
 <head>
-  <meta charset="UTF-8">
-  <title>Ghost Web</title>
-  <style>
-    body {
-      background: black;
-      color: white;
-      text-align: center;
-      font-family: sans-serif;
-      margin: 0;
-      padding-top: 50px;
-    }
-    #ghost {
-      display: none;
-      width: 80%;
-      max-width: 300px;
-    }
-    #msg {
-      display: none;
-      font-size: 24px;
-      color: red;
-    }
-    button {
-      font-size: 20px;
-      padding: 10px 20px;
-      margin-top: 20px;
-    }
-  </style>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Ghost Web</title>
+
+<style>
+  body {
+    margin: 0;
+    background: black;
+    color: white;
+    font-family: sans-serif;
+    text-align: center;
+    overflow: hidden;
+  }
+
+  h1 {
+    margin-top: 40px;
+  }
+
+  button {
+    font-size: 24px;
+    padding: 12px 30px;
+    margin: 20px;
+  }
+
+  #ghost {
+    display: none;
+    position: fixed;
+    inset: 0;
+    width: 100vw;
+    height: 100vh;
+    object-fit: cover;
+    z-index: 10;
+  }
+
+  #escapeBtn {
+    display: none;
+    position: fixed;
+    bottom: 30px;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 20;
+    font-size: 20px;
+  }
+
+  .shake {
+    animation: shake 0.1s infinite;
+  }
+
+  @keyframes shake {
+    0% { transform: translate(0,0); }
+    25% { transform: translate(5px,0); }
+    50% { transform: translate(-5px,0); }
+    75% { transform: translate(0,5px); }
+    100% { transform: translate(0,0); }
+  }
+</style>
 </head>
+
 <body>
 
 <h1>👻 อย่ากด</h1>
 
-<img id="ghost" src="ghost0.jpg">
-
-<br>
 <button id="btn">กด</button>
-<button id="escape">หนี</button>
+<button id="escapeBtn">หนี</button>
 
-<div id="msg">you can't escape</div>
-
-<audio id="scream" preload="auto">
-  <source src="scary-scream-401725.mp3" type="audio/mpeg">
-</audio>
+<img id="ghost" src="ghost1.jpg">
+<audio id="scream" src="scream.mp3" preload="auto"></audio>
 
 <script>
-/* =======================
-   🔓 ปลดล็อกเสียงมือถือ
-   ======================= */
+const btn = document.getElementById("btn");
+const ghost = document.getElementById("ghost");
 const scream = document.getElementById("scream");
+const escapeBtn = document.getElementById("escapeBtn");
+
+let clickCount = 0;
+let ghostLoop, volumeLoop;
+
+const ghosts = [
+  "ghost1.jpg",
+  "ghost2.jpg",
+  "ghost3.jpg"
+];
+
+// 🔓 ปลดล็อกเสียง (มือถือจำเป็น)
 document.body.addEventListener("click", () => {
   scream.muted = false;
-  scream.play().then(() => {
+  scream.play().then(()=>{
     scream.pause();
     scream.currentTime = 0;
   }).catch(()=>{});
-}, { once: true });
+}, { once:true });
 
-/* =======================
-   ตัวแปรหลัก
-   ======================= */
-let clickCount = 0;
-const btn = document.getElementById("btn");
-const ghost = document.getElementById("ghost");
-const escapeBtn = document.getElementById("escape");
-const msg = document.getElementById("msg");
-
-const ghostImages = [
-  "ghost0.jpg",
-  "ghost1.jpg",
-  "ghost2.jpg",
-  "ghost3.jpg",
-  "ghost4.jpg",
-  "ghost5.jpg",
-  "ghost666.jpg"
-];
-
-const youtubeLink = "https://youtu.be/B0mPwbedJCo";
-
-/* =======================
-   ปุ่มกด
-   ======================= */
 btn.onclick = () => {
   clickCount++;
 
-  if (clickCount <= ghostImages.length) {
-    ghost.src = ghostImages[clickCount - 1];
-    ghost.style.display = "block";
-  }
-
-  // เล่นเสียง
-  scream.currentTime = 0;
-  scream.volume = 1;
-  scream.play();
-
-  // ครั้งสุดท้าย = หลอน + เด้ง YouTube
-  if (clickCount === ghostImages.length) {
-    document.body.style.background = "red";
-
-    setTimeout(() => {
-      window.location.href = youtubeLink;
-    }, 5000);
-  }
-};
-
-/* =======================
-   ปุ่มหนี (หลอก)
-   ======================= */
-escapeBtn.onclick = () => {
-  escapeBtn.style.display = "none";
-  msg.style.display = "block";
-};
-</script>
-
-</body>
-</html>  // 👉 ครั้งที่ 1 : ผีแว้บ + เสียง
-  if(clickCount === 1){
+  // ครั้งที่ 1
+  if (clickCount === 1) {
     ghost.src = ghosts[0] + "?v=1";
     ghost.style.display = "block";
     scream.volume = 1;
@@ -125,58 +106,52 @@ escapeBtn.onclick = () => {
     setTimeout(()=>ghost.style.display="none",700);
   }
 
-  // 👉 ครั้งที่ 2 : เปลี่ยนโหมด
-  else if(clickCount === 2){
+  // ครั้งที่ 2
+  else if (clickCount === 2) {
     document.body.style.background = "darkred";
     document.body.style.color = "black";
     btn.style.background = "red";
-    btn.style.color = "black";
   }
 
-  // 👉 ครั้งที่ 3 : นรกแตก
-  else if(clickCount === 3){
+  // ครั้งที่ 3 = นรกแตก
+  else if (clickCount === 3) {
     btn.style.display = "none";
+    ghost.style.display = "block";
+    document.body.classList.add("shake");
+    escapeBtn.style.display = "block";
 
+    let i = 0;
+    ghostLoop = setInterval(()=>{
+      ghost.src = ghosts[i % ghosts.length] + "?v=" + i;
+      i++;
+    },400);
+
+    scream.loop = true;
+    scream.volume = 0.1;
+    scream.currentTime = 0;
+    scream.play();
+
+    let v = 0.1;
+    volumeLoop = setInterval(()=>{
+      v += 0.05;
+      if (v >= 1) {
+        v = 1;
+        scream.playbackRate = 1.3;
+      }
+      scream.volume = v;
+    },500);
+
+    document.body.style.background = "red";
+
+    // ⏱️ 5 วิ วาร์ป YouTube
     setTimeout(()=>{
-      ghost.style.display = "block";
-      document.body.classList.add("shake");
-      escapeBtn.style.display = "block";
-
-      let i = 0;
-      ghostLoop = setInterval(()=>{
-        ghost.src = ghosts[i % ghosts.length] + "?v=" + i;
-        i++;
-      }, 400);
-
-      scream.loop = true;
-      scream.volume = 0.1;
-      scream.currentTime = 0;
-      scream.play();
-
-      let v = 0.1;
-      volumeLoop = setInterval(()=>{
-        v += 0.05;
-        if(v >= 1){
-          v = 1;
-          scream.playbackRate = 1.3;
-        }
-        scream.volume = v;
-      }, 500);
-
-      document.body.style.background = "red";
-
-      // ⏱️ 5 วิ วาร์ป YouTube (https://youtu.be/B0mPwbedJCo?si=gRY8KIMN3h6tUKLB)
-      setTimeout(()=>{
-        window.location.href = "https://youtu.be/B0mPwbedJCo?si=gRY8KIMN3h6tUKLB";
-      }, 5000);
-
-    }, 2500);
+      window.location.href = "https://youtu.be/B0mPwbedJCo";
+    },5000);
   }
 };
 
-escapeBtn.onclick = ()=>{
+escapeBtn.onclick = () => {
   escapeBtn.style.display = "none";
-  msg.style.display = "block";
 };
 </script>
 
