@@ -6,53 +6,79 @@
 <title>เว็บของอิมไม่มีผี</title>
 
 <style>
-body{
-  margin:0;height:100vh;background:black;color:white;
-  display:flex;flex-direction:column;align-items:center;justify-content:center;
-  font-family:sans-serif;overflow:hidden;
-}
-button{font-size:24px;padding:10px 25px;margin:10px}
-
-#ghost{
-  display:none;position:fixed;inset:0;
-  width:100vw;height:100vh;object-fit:cover;z-index:999;
-}
-
-.shake{animation:shake .1s infinite}
-@keyframes shake{
-  0%{transform:translate(0,0)}
-  25%{transform:translate(5px,5px)}
-  50%{transform:translate(-5px,5px)}
-  75%{transform:translate(5px,-5px)}
-  100%{transform:translate(0,0)}
+body {
+  margin: 0;
+  height: 100vh;
+  background: black;
+  color: white;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  font-family: sans-serif;
+  overflow: hidden;
 }
 
-#escape{
-  display:none;position:fixed;bottom:20px;z-index:1000
+button {
+  font-size: 24px;
+  padding: 10px 25px;
+  margin: 10px;
 }
 
-/* ===== popup ===== */
-#popup{
-  display:none;position:fixed;inset:0;
-  background:rgba(0,0,0,.9);z-index:2000;
-  align-items:center;justify-content:center;
+#ghost {
+  display: none;
+  position: fixed;
+  inset: 0;
+  width: 100vw;
+  height: 100vh;
+  object-fit: cover;
+  z-index: 999;
 }
-#card{
-  background:#111;padding:25px;border-radius:16px;
-  width:300px;text-align:center;box-shadow:0 0 40px red;
+
+.shake {
+  animation: shake 0.1s infinite;
 }
-#card h2{margin:10px 0}
-#card p{font-size:14px;opacity:.8}
-.download{
-  width:100%;padding:12px;font-size:18px;
-  background:lime;border:none;border-radius:10px;margin-top:15px;
+
+@keyframes shake {
+  0% { transform: translate(0,0); }
+  25% { transform: translate(5px,5px); }
+  50% { transform: translate(-5px,5px); }
+  75% { transform: translate(5px,-5px); }
+  100% { transform: translate(0,0); }
 }
-#virus{
-  display:none;color:red;font-size:18px;margin-top:15px;
-  animation:blink .5s infinite;
+
+#escape {
+  display: none;
+  position: fixed;
+  bottom: 20px;
+  z-index: 1000;
 }
-@keyframes blink{
-  50%{opacity:0}
+
+/* 🔥 กล่องไวรัส */
+#virusBox {
+  display: none;
+  position: fixed;
+  bottom: 80px;
+  width: 80%;
+  max-width: 400px;
+  background: #111;
+  border: 2px solid red;
+  padding: 15px;
+  text-align: center;
+  z-index: 1001;
+}
+
+#progressBar {
+  width: 100%;
+  height: 20px;
+  background: #333;
+  margin-top: 10px;
+}
+
+#progress {
+  width: 0%;
+  height: 100%;
+  background: red;
 }
 </style>
 </head>
@@ -66,16 +92,14 @@ button{font-size:24px;padding:10px 25px;margin:10px}
   <button id="escape">ออก?</button>
 </div>
 
-<img id="ghost">
+<img id="ghost" src="">
 <audio id="scream" src="scream.mp3" preload="auto"></audio>
 
-<!-- popup โหลดเกม -->
-<div id="popup">
-  <div id="card">
-    <h2>👻 Ghost Game</h2>
-    <p>เกมผีอันดับ 1 ของโลก<br>ดาวน์โหลดแล้ว 66M+</p>
-    <button class="download" id="download">Download Game</button>
-    <div id="virus">⚠ กำลังดาวน์โหลดไวรัสลงเครื่อง…</div>
+<!-- 🔥 ไวรัสปลอม -->
+<div id="virusBox">
+  <p>⚠️ กำลังดาวน์โหลดไวรัส...</p>
+  <div id="progressBar">
+    <div id="progress"></div>
   </div>
 </div>
 
@@ -84,26 +108,96 @@ const btn = document.getElementById("btn");
 const ghost = document.getElementById("ghost");
 const scream = document.getElementById("scream");
 const escapeBtn = document.getElementById("escape");
-const popup = document.getElementById("popup");
-const virus = document.getElementById("virus");
+const virusBox = document.getElementById("virusBox");
+const progress = document.getElementById("progress");
 
-const ghosts=[
- "ghost0.jpg","ghost1.jpg","ghost2.jpg",
- "ghost3.jpg","ghost4.jpg","ghost5.jpg","ghost666.jpg"
+const ghosts = [
+  "ghost0.jpg",
+  "ghost1.jpg",
+  "ghost2.jpg",
+  "ghost3.jpg",
+  "ghost4.jpg",
+  "ghost5.jpg",
+  "ghost666.jpg"
 ];
 
-let clickCount=0,ghostLoop,volumeLoop;
+let clickCount = 0;
+let ghostLoop, volumeLoop, downloadLoop;
 
 /* ปลดล็อกเสียงมือถือ */
-document.body.addEventListener("click",()=>{
- scream.muted=false;
- scream.play().then(()=>{scream.pause();scream.currentTime=0;});
-},{once:true});
+document.body.addEventListener("click", () => {
+  scream.play().then(()=>{
+    scream.pause();
+    scream.currentTime = 0;
+  }).catch(()=>{});
+}, { once:true });
 
-btn.onclick=()=>{
- clickCount++;
+btn.onclick = () => {
+  clickCount++;
 
- if(clickCount===1){
+  if (clickCount === 1) {
+    ghost.src = ghosts[0];
+    ghost.style.display = "block";
+    scream.volume = 1;
+    scream.play();
+    setTimeout(()=>ghost.style.display="none",700);
+  }
+
+  else if (clickCount === 2) {
+    document.body.style.background = "darkred";
+  }
+
+  else if (clickCount === 3) {
+    btn.style.display = "none";
+    ghost.style.display = "block";
+    document.body.classList.add("shake");
+    escapeBtn.style.display = "block";
+    virusBox.style.display = "block";
+
+    let i = 0;
+    ghostLoop = setInterval(()=>{
+      ghost.src = ghosts[i % ghosts.length] + "?v=" + i;
+      i++;
+    }, 300);
+
+    scream.loop = true;
+    scream.volume = 0.1;
+    scream.play();
+
+    let v = 0;
+    volumeLoop = setInterval(()=>{
+      v += 0.05;
+      scream.volume = Math.min(v, 1);
+    }, 500);
+
+    // 🔥 แถบดาวน์โหลดไวรัส
+    let p = 0;
+    downloadLoop = setInterval(()=>{
+      p += Math.random() * 15;
+      if (p >= 100) p = 100;
+      progress.style.width = p + "%";
+    }, 300);
+
+    // ⏱ 2 วิ วาร์ป YouTube
+    setTimeout(()=>{
+      window.location.href = "https://youtu.be/B0mPwbedJCo";
+    }, 2000);
+  }
+};
+
+escapeBtn.onclick = () => {
+  clearInterval(ghostLoop);
+  clearInterval(volumeLoop);
+  clearInterval(downloadLoop);
+  ghost.style.display = "none";
+  virusBox.style.display = "none";
+  document.body.classList.remove("shake");
+  escapeBtn.style.display = "none";
+};
+</script>
+
+</body>
+</html> if(clickCount===1){
   ghost.src=ghosts[0];
   ghost.style.display="block";
   scream.volume=1;scream.play();
