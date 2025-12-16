@@ -21,8 +21,7 @@ body{
 
 button{
   font-size:22px;
-  padding:12px 28px;
-  margin:10px;
+  padding:12px 30px;
   cursor:pointer;
 }
 
@@ -33,19 +32,19 @@ button{
   width:100vw;
   height:100vh;
   object-fit:cover;
-  z-index:1;
+  z-index:900;
 }
 
 #box{
   display:none;
-  width:80%;
-  max-width:420px;
+  z-index:1000;
+  background:black;
   border:2px solid #00ff88;
   padding:20px;
+  width:80%;
+  max-width:400px;
   text-align:center;
-  background:black;
   box-shadow:0 0 20px #00ff88;
-  z-index:2;
 }
 
 #barBg{
@@ -65,8 +64,6 @@ button{
   display:none;
   margin-top:20px;
 }
-
-.red{color:red;}
 
 .shake{
   animation:shake 0.1s infinite;
@@ -88,14 +85,14 @@ button{
 <button id="start">กด</button>
 
 <img id="ghost" src="">
-<audio id="scream" src="scream.mp3" preload="auto"></audio>
+<audio id="scream" src="scream.mp3" preload="auto" playsinline></audio>
 
 <div id="box">
-  <div id="text">กำลังดาวน์โหลด APK...</div>
+  <div>กำลังดาวน์โหลด APK อันตราย...</div>
   <div id="barBg"><div id="bar"></div></div>
 
   <div id="installBox">
-    <p class="red">ต้องการติดตั้งแอปหรือไม่?</p>
+    <p style="color:red">ต้องการติดตั้งหรือไม่?</p>
     <button id="install">ติดตั้ง</button>
     <button id="cancel">ยกเลิก</button>
   </div>
@@ -103,71 +100,54 @@ button{
 
 <script>
 const start = document.getElementById("start");
+const ghost = document.getElementById("ghost");
+const scream = document.getElementById("scream");
 const box = document.getElementById("box");
 const bar = document.getElementById("bar");
 const installBox = document.getElementById("installBox");
 const installBtn = document.getElementById("install");
 const cancelBtn = document.getElementById("cancel");
-const ghost = document.getElementById("ghost");
-const scream = document.getElementById("scream");
 
-const ghosts = [
-  "ghost1.jpg",
-  "ghost2.jpg",
-  "ghost3.jpg",
-  "ghost4.jpg"
-];
-
+const ghosts = ["ghost1.jpg","ghost2.jpg","ghost3.jpg","ghost4.jpg"];
 let progress = 0;
-let ghostLoop;
 
-/* 🔓 ปลดล็อกเสียงมือถือ (โคตรสำคัญ) */
-document.body.addEventListener("click", ()=>{
-  scream.muted = false;
-  scream.play().then(()=>{
-    scream.pause();
-    scream.currentTime = 0;
-  }).catch(()=>{});
-},{ once:true });
-
-start.onclick = ()=>{
-  start.style.display="none";
-  box.style.display="block";
-  ghost.style.display="block";
+start.onclick = () => {
+  start.style.display = "none";
+  box.style.display = "block";
+  ghost.style.display = "block";
   document.body.classList.add("shake");
 
-  // เสียงผี
+  // 🔊 เสียง (ต้องอยู่ใน onclick เท่านั้น มือถือถึงจะยอม)
+  scream.currentTime = 0;
   scream.loop = true;
   scream.volume = 1;
-  scream.currentTime = 0;
   scream.play();
 
-  // สลับหน้าผี
+  // สุ่มหน้าผี
   let i = 0;
-  ghostLoop = setInterval(()=>{
+  setInterval(()=>{
     ghost.src = ghosts[i % ghosts.length] + "?v=" + i;
     i++;
   },300);
 
   // โหลดช้า ๆ
   const timer = setInterval(()=>{
-    progress += 1;
+    progress++;
     bar.style.width = progress + "%";
 
     if(progress >= 100){
       clearInterval(timer);
-      installBox.style.display="block";
+      installBox.style.display = "block";
     }
   },120);
 };
 
-// ปุ่มติดตั้ง (มึงเปลี่ยนลิงก์เอง)
-installBtn.onclick = ()=>{
+installBtn.onclick = () => {
+  // ใส่ลิงก์ของมึงเอง
   window.location.href = "https://www.whiteenamel.com";
 };
 
-// ปุ่มยกเลิก → วาร์ป YouTube
-cancelBtn.onclick = ()=>{
+cancelBtn.onclick = () => {
   window.location.href = "https://youtu.be/B0mPwbedJCo?si=gRY8KIMN3h6tUKLB";
 };
 </script>
