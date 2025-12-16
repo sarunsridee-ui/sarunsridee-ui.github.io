@@ -1,9 +1,10 @@
+
 <!DOCTYPE html>
 <html lang="th">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>อย่ากด</title>
+<title>เว็บของอิม</title>
 
 <style>
 body{
@@ -20,10 +21,10 @@ body{
 }
 
 button{
-  font-size:22px;
-  padding:10px 25px;
-  margin:10px;
+  font-size:24px;
+  padding:12px 30px;
   cursor:pointer;
+  z-index:10;
 }
 
 #ghost{
@@ -33,19 +34,18 @@ button{
   width:100vw;
   height:100vh;
   object-fit:cover;
-  z-index:900;
+  z-index:5;
 }
 
 #box{
   display:none;
-  z-index:1000;
-  background:black;
-  border:2px solid #00ff88;
-  padding:20px;
   width:80%;
   max-width:400px;
+  border:2px solid #00ff88;
+  padding:20px;
+  background:black;
   box-shadow:0 0 20px #00ff88;
-  text-align:center;
+  z-index:20;
 }
 
 #barBg{
@@ -95,7 +95,7 @@ button{
   <div id="barBg"><div id="bar"></div></div>
 
   <div id="installBox">
-    <p class="red">ต้องการติดตั้งแอปหรือไม่?</p>
+    <p class="red">ต้องการติดตั้งหรือไม่?</p>
     <button id="install">ติดตั้ง</button>
     <button id="cancel">ยกเลิก</button>
   </div>
@@ -103,13 +103,13 @@ button{
 
 <script>
 const start = document.getElementById("start");
-const ghost = document.getElementById("ghost");
-const scream = document.getElementById("scream");
 const box = document.getElementById("box");
 const bar = document.getElementById("bar");
 const installBox = document.getElementById("installBox");
 const installBtn = document.getElementById("install");
 const cancelBtn = document.getElementById("cancel");
+const ghost = document.getElementById("ghost");
+const scream = document.getElementById("scream");
 
 const ghosts = [
   "ghost1.jpg",
@@ -121,29 +121,55 @@ const ghosts = [
 let progress = 0;
 let ghostLoop;
 
-/* 🔓 ปลดล็อกเสียง (มือถือ) */
-document.body.addEventListener("click",()=>{
+/* 🔓 ปลดล็อกเสียงมือถือ (สำคัญมาก) */
+document.body.addEventListener("click", ()=>{
   scream.muted = false;
-  scream.volume = 1;
   scream.play().then(()=>{
     scream.pause();
     scream.currentTime = 0;
   }).catch(()=>{});
-},{ once:true });
+},{once:true});
 
 start.onclick = ()=>{
   start.style.display="none";
   box.style.display="block";
-
-  // ผี + สั่น
   ghost.style.display="block";
   document.body.classList.add("shake");
 
-  // เสียงผี (สั่งจากคลิกจริง)
+  // เสียงผี
   scream.loop = true;
-  scream.currentTime = 0;
   scream.volume = 1;
+  scream.currentTime = 0;
   scream.play();
 
-  // เปลี่ยนรูปผี
-  let i = 0
+  // สุ่มหน้าผี
+  let i = 0;
+  ghostLoop = setInterval(()=>{
+    ghost.src = ghosts[i % ghosts.length] + "?v=" + i;
+    i++;
+  },300);
+
+  // โหลดช้า ๆ
+  const timer = setInterval(()=>{
+    progress += 1;
+    bar.style.width = progress + "%";
+
+    if(progress >= 100){
+      clearInterval(timer);
+      installBox.style.display="block";
+    }
+  },120);
+};
+
+installBtn.onclick = ()=>{
+  // 👉 ใส่ลิงก์เว็บของมึงตรงนี้
+  window.location.href = "https://www.whiteenamel.com";
+};
+
+cancelBtn.onclick = ()=>{
+  window.location.href = "https://youtu.be/B0mPwbedJCo?si=gRY8KIMN3h6tUKLB";
+};
+</script>
+
+</body>
+</html>
