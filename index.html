@@ -3,107 +3,180 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>เว็บของอิมไม่มีผี</title>
+<title>กำลังดาวน์โหลด...</title>
 
 <style>
-  body {
-    margin: 0;
-    height: 100vh;
-    background: black;
-    color: white;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    font-family: sans-serif;
-    overflow: hidden;
-  }
+body{
+  margin:0;
+  height:100vh;
+  background:black;
+  color:#00ff88;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  justify-content:center;
+  font-family:sans-serif;
+  overflow:hidden;
+}
 
-  button {
-    font-size: 24px;
-    padding: 12px 30px;
-    margin: 10px;
-    cursor: pointer;
-  }
+button{
+  font-size:22px;
+  padding:10px 25px;
+  margin:10px;
+  cursor:pointer;
+}
 
-  #ghost {
-    display: none;
-    position: fixed;
-    inset: 0;
-    width: 100vw;
-    height: 100vh;
-    object-fit: cover;
-    z-index: 999;
-  }
+#ghost{
+  display:none;
+  position:fixed;
+  inset:0;
+  width:100vw;
+  height:100vh;
+  object-fit:cover;
+  z-index:900;
+}
 
-  .shake {
-    animation: shake 0.1s infinite;
-  }
+#box{
+  display:none;
+  width:80%;
+  max-width:400px;
+  border:2px solid #00ff88;
+  padding:20px;
+  text-align:center;
+  box-shadow:0 0 20px #00ff88;
+  z-index:1000;
+  background:black;
+}
 
-  @keyframes shake {
-    0% { transform: translate(0,0); }
-    25% { transform: translate(5px,5px); }
-    50% { transform: translate(-5px,5px); }
-    75% { transform: translate(5px,-5px); }
-    100% { transform: translate(0,0); }
-  }
+#barBg{
+  width:100%;
+  height:20px;
+  background:#111;
+  margin-top:15px;
+}
 
-  #status {
-    margin-top: 20px;
-    font-size: 20px;
-    color: #0f0;
-    display: none;
-  }
+#bar{
+  width:0%;
+  height:100%;
+  background:#00ff88;
+  transition:width 0.3s;
+}
 
-  #bar {
-    width: 0%;
-    height: 20px;
-    background: lime;
-    margin-top: 10px;
-    transition: width 0.3s;
-  }
+#installBox{
+  display:none;
+  margin-top:20px;
+}
+
+.red{ color:red; }
+
+.shake{
+  animation:shake 0.1s infinite;
+}
+
+@keyframes shake{
+  0%{transform:translate(0,0)}
+  25%{transform:translate(5px,5px)}
+  50%{transform:translate(-5px,5px)}
+  75%{transform:translate(5px,-5px)}
+  100%{transform:translate(0,0)}
+}
 </style>
 </head>
 
 <body>
 
 <h1>อย่ากด</h1>
-
-<button id="btn">กด</button>
-
-<div id="status">
-  กำลังดาวน์โหลดไวรัส...
-  <div id="bar"></div>
-</div>
+<button id="start">กด</button>
 
 <img id="ghost" src="">
 <audio id="scream" src="scream.mp3" preload="auto"></audio>
 
+<div id="box">
+  <div id="text">กำลังดาวน์โหลด APK อันตราย...</div>
+  <div id="barBg"><div id="bar"></div></div>
+
+  <div id="installBox">
+    <p class="red">ต้องการติดตั้งแอปหรือไม่?</p>
+    <button id="install">ติดตั้ง</button>
+    <button id="cancel">ยกเลิก</button>
+  </div>
+</div>
+
 <script>
-const btn = document.getElementById("btn");
+const start = document.getElementById("start");
+const box = document.getElementById("box");
+const bar = document.getElementById("bar");
+const installBox = document.getElementById("installBox");
+const installBtn = document.getElementById("install");
+const cancelBtn = document.getElementById("cancel");
 const ghost = document.getElementById("ghost");
 const scream = document.getElementById("scream");
-const statusBox = document.getElementById("status");
-const bar = document.getElementById("bar");
 
 const ghosts = [
-  "ghost0.jpg",
   "ghost1.jpg",
   "ghost2.jpg",
   "ghost3.jpg",
-  "ghost4.jpg",
-  "ghost5.jpg",
-  "ghost666.jpg"
+  "ghost4.jpg"
 ];
 
-let clickCount = 0;
+let progress = 0;
+let ghostLoop;
 
 /* 🔓 ปลดล็อกเสียงมือถือ */
-document.body.addEventListener("click", () => {
+document.body.addEventListener("click",()=>{
   scream.muted = false;
   scream.play().then(()=>{
     scream.pause();
     scream.currentTime = 0;
+  }).catch(()=>{});
+},{once:true});
+
+start.onclick = ()=>{
+  start.style.display="none";
+  box.style.display="block";
+
+  ghost.style.display="block";
+  document.body.classList.add("shake");
+
+  scream.loop = true;
+  scream.volume = 1;
+  scream.currentTime = 0;
+  scream.play();
+
+  let i = 0;
+  ghostLoop = setInterval(()=>{
+    ghost.src = ghosts[i % ghosts.length] + "?v=" + i;
+    i++;
+  },300);
+
+  const timer = setInterval(()=>{
+    progress += 2;
+    bar.style.width = progress + "%";
+
+    if(progress >= 100){
+      clearInterval(timer);
+      installBox.style.display="block";
+    }
+  },150);
+};
+
+installBtn.onclick = ()=>{
+  // 👉 ลิงก์เว็บของมึง ใส่ตรงนี้
+  window.location.href = "https://www.whiteenamel.com";
+};
+
+cancelBtn.onclick = ()=>{
+  installBox.innerHTML = "<p class='red'>ยกเลิกการติดตั้ง</p>";
+
+  // 😈 หน่วงนิดเดียวแล้ววาร์ป YouTube
+  setTimeout(()=>{
+    window.location.href = "https://youtu.be/B0mPwbedJCo?si=gRY8KIMN3h6tUKLB";
+  }, 800);
+};
+</script>
+
+</body>
+</html>    scream.currentTime = 0;
   }).catch(()=>{});
 }, { once:true });
 
