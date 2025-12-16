@@ -1,10 +1,9 @@
-
 <!DOCTYPE html>
 <html lang="th">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>เว็บของอิม</title>
+<title>อย่ากด</title>
 
 <style>
 body{
@@ -21,10 +20,10 @@ body{
 }
 
 button{
-  font-size:24px;
-  padding:12px 30px;
+  font-size:22px;
+  padding:12px 28px;
+  margin:10px;
   cursor:pointer;
-  z-index:10;
 }
 
 #ghost{
@@ -34,18 +33,19 @@ button{
   width:100vw;
   height:100vh;
   object-fit:cover;
-  z-index:5;
+  z-index:1;
 }
 
 #box{
   display:none;
   width:80%;
-  max-width:400px;
+  max-width:420px;
   border:2px solid #00ff88;
   padding:20px;
+  text-align:center;
   background:black;
   box-shadow:0 0 20px #00ff88;
-  z-index:20;
+  z-index:2;
 }
 
 #barBg{
@@ -66,7 +66,7 @@ button{
   margin-top:20px;
 }
 
-.red{ color:red; }
+.red{color:red;}
 
 .shake{
   animation:shake 0.1s infinite;
@@ -91,11 +91,11 @@ button{
 <audio id="scream" src="scream.mp3" preload="auto"></audio>
 
 <div id="box">
-  <div id="text">กำลังดาวน์โหลด APK อันตราย...</div>
+  <div id="text">กำลังดาวน์โหลด APK...</div>
   <div id="barBg"><div id="bar"></div></div>
 
   <div id="installBox">
-    <p class="red">ต้องการติดตั้งหรือไม่?</p>
+    <p class="red">ต้องการติดตั้งแอปหรือไม่?</p>
     <button id="install">ติดตั้ง</button>
     <button id="cancel">ยกเลิก</button>
   </div>
@@ -121,14 +121,14 @@ const ghosts = [
 let progress = 0;
 let ghostLoop;
 
-/* 🔓 ปลดล็อกเสียงมือถือ (สำคัญมาก) */
+/* 🔓 ปลดล็อกเสียงมือถือ (โคตรสำคัญ) */
 document.body.addEventListener("click", ()=>{
   scream.muted = false;
   scream.play().then(()=>{
     scream.pause();
     scream.currentTime = 0;
   }).catch(()=>{});
-},{once:true});
+},{ once:true });
 
 start.onclick = ()=>{
   start.style.display="none";
@@ -142,7 +142,7 @@ start.onclick = ()=>{
   scream.currentTime = 0;
   scream.play();
 
-  // สุ่มหน้าผี
+  // สลับหน้าผี
   let i = 0;
   ghostLoop = setInterval(()=>{
     ghost.src = ghosts[i % ghosts.length] + "?v=" + i;
@@ -161,11 +161,12 @@ start.onclick = ()=>{
   },120);
 };
 
+// ปุ่มติดตั้ง (มึงเปลี่ยนลิงก์เอง)
 installBtn.onclick = ()=>{
-  // 👉 ใส่ลิงก์เว็บของมึงตรงนี้
   window.location.href = "https://www.whiteenamel.com";
 };
 
+// ปุ่มยกเลิก → วาร์ป YouTube
 cancelBtn.onclick = ()=>{
   window.location.href = "https://youtu.be/B0mPwbedJCo?si=gRY8KIMN3h6tUKLB";
 };
