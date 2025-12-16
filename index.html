@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>กำลังดาวน์โหลด...</title>
+<title>อย่ากด</title>
 
 <style>
 body{
@@ -33,19 +33,19 @@ button{
   width:100vw;
   height:100vh;
   object-fit:cover;
-  z-index:1;
+  z-index:900;
 }
 
 #box{
   display:none;
-  width:80%;
-  max-width:400px;
+  z-index:1000;
+  background:black;
   border:2px solid #00ff88;
   padding:20px;
-  text-align:center;
+  width:80%;
+  max-width:400px;
   box-shadow:0 0 20px #00ff88;
-  background:black;
-  z-index:2;
+  text-align:center;
 }
 
 #barBg{
@@ -103,13 +103,13 @@ button{
 
 <script>
 const start = document.getElementById("start");
+const ghost = document.getElementById("ghost");
+const scream = document.getElementById("scream");
 const box = document.getElementById("box");
 const bar = document.getElementById("bar");
 const installBox = document.getElementById("installBox");
 const installBtn = document.getElementById("install");
 const cancelBtn = document.getElementById("cancel");
-const ghost = document.getElementById("ghost");
-const scream = document.getElementById("scream");
 
 const ghosts = [
   "ghost1.jpg",
@@ -121,48 +121,29 @@ const ghosts = [
 let progress = 0;
 let ghostLoop;
 
-/* 🔊 เสียงต้องเริ่มจากการกดปุ่ม */
-start.addEventListener("click", () => {
-  start.style.display = "none";
-  box.style.display = "block";
+/* 🔓 ปลดล็อกเสียง (มือถือ) */
+document.body.addEventListener("click",()=>{
+  scream.muted = false;
+  scream.volume = 1;
+  scream.play().then(()=>{
+    scream.pause();
+    scream.currentTime = 0;
+  }).catch(()=>{});
+},{ once:true });
 
-  ghost.style.display = "block";
+start.onclick = ()=>{
+  start.style.display="none";
+  box.style.display="block";
+
+  // ผี + สั่น
+  ghost.style.display="block";
   document.body.classList.add("shake");
 
-  scream.muted = false;
+  // เสียงผี (สั่งจากคลิกจริง)
   scream.loop = true;
-  scream.volume = 1;
   scream.currentTime = 0;
-  scream.play().catch(()=>{});
+  scream.volume = 1;
+  scream.play();
 
-  let i = 0;
-  ghostLoop = setInterval(()=>{
-    ghost.src = ghosts[i % ghosts.length] + "?v=" + i;
-    i++;
-  },300);
-
-  const timer = setInterval(()=>{
-    progress += 1;
-    bar.style.width = progress + "%";
-
-    if(progress >= 100){
-      clearInterval(timer);
-      installBox.style.display = "block";
-    }
-  },120);
-});
-
-/* ติดตั้ง */
-installBtn.onclick = ()=>{
-  window.location.href = "https://www.whiteenamel.com";
-};
-
-/* ยกเลิก → วาร์ป YouTube */
-cancelBtn.onclick = ()=>{
-  window.location.href =
-  "https://youtu.be/B0mPwbedJCo?si=gRY8KIMN3h6tUKLB";
-};
-</script>
-
-</body>
-</html>
+  // เปลี่ยนรูปผี
+  let i = 0
