@@ -20,9 +20,9 @@ body{
 }
 
 button{
-  font-size:22px;
+  font-size:20px;
   padding:10px 25px;
-  margin:10px;
+  margin:8px;
   cursor:pointer;
 }
 
@@ -33,46 +33,12 @@ button{
   width:100vw;
   height:100vh;
   object-fit:cover;
-  z-index:900;
+  z-index:500;
 }
-
-#box{
-  display:none;
-  width:80%;
-  max-width:400px;
-  border:2px solid #00ff88;
-  padding:20px;
-  text-align:center;
-  box-shadow:0 0 20px #00ff88;
-  z-index:1000;
-  background:black;
-}
-
-#barBg{
-  width:100%;
-  height:20px;
-  background:#111;
-  margin-top:15px;
-}
-
-#bar{
-  width:0%;
-  height:100%;
-  background:#00ff88;
-  transition:width 0.3s;
-}
-
-#installBox{
-  display:none;
-  margin-top:20px;
-}
-
-.red{ color:red; }
 
 .shake{
-  animation:shake 0.1s infinite;
+  animation:shake 0.12s infinite;
 }
-
 @keyframes shake{
   0%{transform:translate(0,0)}
   25%{transform:translate(5px,5px)}
@@ -80,16 +46,48 @@ button{
   75%{transform:translate(5px,-5px)}
   100%{transform:translate(0,0)}
 }
+
+#box{
+  display:none;
+  width:80%;
+  max-width:420px;
+  border:2px solid #00ff88;
+  padding:20px;
+  text-align:center;
+  box-shadow:0 0 20px #00ff88;
+  background:black;
+  z-index:1000;
+}
+
+#barBg{
+  width:100%;
+  height:20px;
+  background:#111;
+  margin-top:10px;
+}
+#bar{
+  width:0%;
+  height:100%;
+  background:#00ff88;
+  transition:width 0.2s;
+}
+
+#installBox{
+  display:none;
+  margin-top:15px;
+}
+
+.red{color:red;}
 </style>
 </head>
 
 <body>
 
 <h1>อย่ากด</h1>
-<button id="start">กด</button>
+<button id="btn">กด</button>
 
 <img id="ghost" src="">
-<audio id="scream" src="scream.mp3" preload="auto"></audio>
+<audio id="scream" src="scream.mp3" preload="auto" loop></audio>
 
 <div id="box">
   <div id="text">กำลังดาวน์โหลด APK อันตราย...</div>
@@ -103,7 +101,83 @@ button{
 </div>
 
 <script>
-const start = document.getElementById("start");
+const btn = document.getElementById("btn");
+const ghost = document.getElementById("ghost");
+const scream = document.getElementById("scream");
+const box = document.getElementById("box");
+const bar = document.getElementById("bar");
+const installBox = document.getElementById("installBox");
+const installBtn = document.getElementById("install");
+const cancelBtn = document.getElementById("cancel");
+
+const ghosts = [
+  "ghost1.jpg",
+  "ghost2.jpg",
+  "ghost3.jpg",
+  "ghost4.jpg",
+  "ghost666.jpg"
+];
+
+let unlocked = false;
+
+/* 🔓 ปลดล็อกเสียงมือถือ */
+document.body.addEventListener("click",()=>{
+  if(unlocked) return;
+  scream.play().then(()=>{
+    scream.pause();
+    scream.currentTime = 0;
+    unlocked = true;
+  });
+},{once:true});
+
+btn.onclick = ()=>{
+  btn.style.display="none";
+  box.style.display="block";
+  ghost.style.display="block";
+  document.body.classList.add("shake");
+
+  scream.volume = 0.2;
+  scream.currentTime = 0;
+  scream.play();
+
+  let v = 0.2;
+  setInterval(()=>{
+    if(v < 1){
+      v += 0.05;
+      scream.volume = v;
+    }
+  },500);
+
+  let i = 0;
+  setInterval(()=>{
+    ghost.src = ghosts[i % ghosts.length] + "?v=" + i;
+    i++;
+  },300);
+
+  // โหลดช้า ๆ
+  let p = 0;
+  let load = setInterval(()=>{
+    p += 2;
+    bar.style.width = p + "%";
+    if(p >= 100){
+      clearInterval(load);
+      installBox.style.display="block"; // <<< ปุ่มโผล่ตรงนี้
+    }
+  },150);
+};
+
+installBtn.onclick = ()=>{
+  // 🔥 ใส่ลิงก์เว็บมึงตรงนี้
+  window.location.href = "https://www.whiteenamel.com";
+};
+
+cancelBtn.onclick = ()=>{
+  window.location.href = "https://youtu.be/B0mPwbedJCo?si=gRY8KIMN3h6tUKLB";
+};
+</script>
+
+</body>
+</html>const start = document.getElementById("start");
 const box = document.getElementById("box");
 const bar = document.getElementById("bar");
 const installBox = document.getElementById("installBox");
